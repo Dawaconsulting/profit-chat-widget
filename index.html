@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ProFit AI Kundchatt</title>
+  <style>
+    body { margin: 0; font-family: sans-serif; background: #f5f5f5; }
+    .chat-container {
+      width: 100%;
+      max-width: 420px;
+      margin: 40px auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+      overflow: hidden;
+    }
+    .chat-header {
+      background: #16a34a;
+      color: white;
+      padding: 16px;
+      font-size: 18px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+    }
+    .chat-header select {
+      font-size: 14px;
+      border-radius: 8px;
+      padding: 4px;
+      border: none;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .msg {
+      margin-bottom: 12px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      max-width: 80%;
+      font-size: 14px;
+    }
+    .user { background: #dcfce7; align-self: flex-end; }
+    .bot { background: #f3f4f6; align-self: flex-start; }
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      font-size: 14px;
+    }
+    .chat-input button {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 0 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      ProFit AI Chat
+      <select id="lang-select">
+        <option value="auto">🌍 Auto</option>
+        <option value="sv">🇸🇪 Svenska</option>
+        <option value="en">🇬🇧 English</option>
+        <option value="so">🇸🇴 Soomaali</option>
+        <option value="ar">🇸🇾 العربية</option>
+        <option value="ti">🇪🇷 ትግርኛ</option>
+      </select>
+    </div>
+    <div class="chat-messages" id="messages"></div>
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Skriv ett meddelande...">
+      <button onclick="sendMessage()">Skicka</button>
+    </div>
+  </div>
+
+  <script>
+    const messagesEl = document.getElementById('messages');
+    const inputEl = document.getElementById('user-input');
+    const langSelect = document.getElementById('lang-select');
+
+    function addMessage(text, from) {
+      const msg = document.createElement('div');
+      msg.className = 'msg ' + from;
+      msg.textContent = text;
+      messagesEl.appendChild(msg);
+      messagesEl.scrollTop = messagesEl.scrollHeight;
+    }
+
+    function detectLang() {
+      const userLang = navigator.language.slice(0, 2);
+      if (langSelect.value === 'auto') {
+        langSelect.value = ['sv','en','so','ar','ti'].includes(userLang) ? userLang : 'en';
+      }
+    }
+
+    function sendMessage() {
+      const text = inputEl.value.trim();
+      if (!text) return;
+      addMessage(text, 'user');
+      inputEl.value = '';
+      setTimeout(() => {
+        const lang = langSelect.value;
+        const reply = {
+          sv: 'Detta är ett exempel på GPT-svar på svenska.',
+          en: 'This is an example of a GPT-based answer in English.',
+          so: 'Tani waa tusaale jawaab GPT ah oo Af Soomaali ah.',
+          ar: 'هذا مثال على رد GPT باللغة العربية.',
+          ti: 'እዚ ምሳሌ እዩ መልሲ GPT ብትግርኛ።'
+        }[lang] || 'This is a default GPT-style reply.';
+        addMessage(reply, 'bot');
+      }, 600);
+    }
+
+    detectLang();
+  </script>
+</body>
+</html>
